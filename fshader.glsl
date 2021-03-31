@@ -85,11 +85,44 @@ float lagomorph_legs(vec3 p) {
     return dist;
 }
 
+float finger(vec3 p, float offset, float len, float angle) {
+    p.xy *= rotate(angle);
+    p.x += offset;
+    return round_cone(p, 0.08, 0.12, len);
+}
+
+float lagomorph_arms(vec3 p) {
+    p.y -= 2;
+    p.x = abs(p.x) - 0.2;
+    p.xy *= rotate(120);
+    float dist = round_cone(p, 0.1, 0.1, 0.6);
+    p.y -= 0.6;
+    p.xy *= rotate(20);
+    dist = min(dist, round_cone(p, 0.1, 0.12, 0.4));
+    p.y -= 0.4;
+    p.xz *= rotate(-30);
+    p.yz *= rotate(-60);
+    dist = min(dist, origin_sphere(p, 0.2));
+    dist = min(dist, finger(p, 0.08, 0.4, -50));
+    dist = min(dist, finger(p, 0.05, 0.5, -10));
+    dist = min(dist, finger(p, -0.05, 0.5, 0));
+    dist = min(dist, finger(p, -0.1, 0.45, 60));
+    return dist;
+}
+
+float lagomorph_head(vec3 p) {
+    p.y -= 2.8;
+    p.x /= 1.5;
+    return origin_sphere(p, 0.48);
+}
+
 float lagomorph(vec3 p) {
     p.y -= 1;
     float dist = round_cone(p, 0.4, 0.2, 1);
     p.y += 1.3;
     dist = min(dist, lagomorph_legs(p));
+    dist = min(dist, lagomorph_arms(p));
+    dist = min(dist, lagomorph_head(p));
     return dist;
 }
 
