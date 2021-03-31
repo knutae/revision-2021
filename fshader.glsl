@@ -16,6 +16,7 @@ struct ma {
 };
 
 float DRAW_DISTANCE = 500.0;
+float PI = atan(1)*4;
 
 float origin_sphere(vec3 p, float radius) {
     return length(p) - radius;
@@ -48,9 +49,54 @@ float floor(vec3 p) {
         repeated_boxes_xz(vec3(p.x, p.y+2, p.z), vec3(1), 0.1, 5));
 }
 
+float round_cone(vec3 p, float r1, float r2, float h) {
+  vec2 q = vec2(length(p.xz), p.y);
+  float b = (r1-r2)/h;
+  float a = sqrt(1.0-b*b);
+  float k = dot(q,vec2(-b,a));
+  if(k < 0) return length(q) - r1;
+  if(k > a*h) return length(q-vec2(0.0,h))-r2;
+  return dot(q, vec2(a,b)) - r1;
+}
+
+mat2 rotate(float a) {
+    float r = a * PI / 180;
+    return mat2(cos(r), -sin(r), sin(r), cos(r));
+}
+
+float lagomorph_legs(vec3 p) {
+    p.z -= 0.2;
+    p.y -= 0.5;
+    p.x = abs(p.x) - 0.7;
+    // upper legs
+    p.xy *= rotate(143);
+    p.y += 0.9;
+    float dist = round_cone(p, 0.13, 0.18, 0.8);
+    // lower legs
+    p.y -= 0.8;
+    p.xy *= rotate(12);
+    dist = min(dist, round_cone(p, 0.18, 0.2, 0.4));
+    // feet
+    p.y -= 0.4;
+    p.yz *= rotate(-90);
+    p.xy *= rotate(-10);
+    p.xz *= rotate(-20);
+    dist = min(dist, max(round_cone(p, 0.1, 0.3, 0.7), 0.05 - p.z));
+    return dist;
+}
+
+float lagomorph(vec3 p) {
+    p.y -= 1;
+    float dist = round_cone(p, 0.4, 0.2, 1);
+    p.y += 1.3;
+    dist = min(dist, lagomorph_legs(p));
+    return dist;
+}
+
 float scene(vec3 p, out ma mat) {
-    float dist = origin_sphere(p, 1);
-    mat = ma(0.1, 0.9, 0, 10, 0.5, vec3(0.8));
+    //float dist = origin_sphere(p, 1);
+    float dist = lagomorph(p);
+    mat = ma(0.1, 0.9, 0, 10, 0, vec3(1));
     closest_material(dist, mat, floor(p), ma(0.1, 0.9, 0, 10, 0.0, vec3(0.8)));
     return dist;
 }
