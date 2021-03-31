@@ -1,0 +1,8 @@
+[submodule "ELFkickers"]
+	path = ELFkickers
+	url = git@github.com:BR903/ELFkickers.git
+	ignore = dirty
+[submodule "Shader_Minifier"]
+	path = Shader_Minifier
+	url = git@github.com:laurentlb/Shader_Minifier.git
+	ignore = dirty

@@ -1,0 +1,5 @@
+#!/bin/sh
+X=/tmp/a
+dd bs=1 skip=67<$0|xzcat>$X
+chmod +x $X
+exec $X
