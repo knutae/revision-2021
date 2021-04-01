@@ -91,6 +91,11 @@ float finger(vec3 p, float offset, float len, float angle) {
     return round_cone(p, 0.08, 0.12, len);
 }
 
+float smooth_union(float a, float b, float k) {
+    float h = clamp(0.5 + 0.5*(b-a)/k, 0, 1);
+    return mix(b, a, h) - k*h*(1-h);
+}
+
 float lagomorph_arms(vec3 p) {
     p.y -= 2;
     p.x = abs(p.x) - 0.2;
@@ -98,15 +103,15 @@ float lagomorph_arms(vec3 p) {
     float dist = round_cone(p, 0.1, 0.1, 0.6);
     p.y -= 0.6;
     p.xy *= rotate(20);
-    dist = min(dist, round_cone(p, 0.1, 0.12, 0.4));
+    dist = smooth_union(dist, round_cone(p, 0.1, 0.12, 0.4), 0.02);
     p.y -= 0.4;
     p.xz *= rotate(-30);
     p.yz *= rotate(-60);
-    dist = min(dist, origin_sphere(p, 0.2));
-    dist = min(dist, finger(p, 0.08, 0.4, -50));
-    dist = min(dist, finger(p, 0.05, 0.5, -10));
-    dist = min(dist, finger(p, -0.05, 0.5, 0));
-    dist = min(dist, finger(p, -0.1, 0.45, 60));
+    dist = smooth_union(dist, origin_sphere(p, 0.22), 0.1);
+    dist = smooth_union(dist, finger(p, 0.08, 0.4, -50), 0.02);
+    dist = smooth_union(dist, finger(p, 0.05, 0.5, -10), 0.02);
+    dist = smooth_union(dist, finger(p, -0.05, 0.5, 0), 0.02);
+    dist = smooth_union(dist, finger(p, -0.1, 0.45, 60), 0.02);
     return dist;
 }
 
@@ -120,9 +125,9 @@ float lagomorph(vec3 p) {
     p.y -= 1;
     float dist = round_cone(p, 0.4, 0.2, 1);
     p.y += 1.3;
-    dist = min(dist, lagomorph_legs(p));
-    dist = min(dist, lagomorph_arms(p));
-    dist = min(dist, lagomorph_head(p));
+    dist = smooth_union(dist, lagomorph_legs(p), 0.05);
+    dist = smooth_union(dist, lagomorph_arms(p), 0.05);
+    dist = smooth_union(dist, lagomorph_head(p), 0.05);
     return dist;
 }
 
