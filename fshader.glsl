@@ -85,10 +85,11 @@ float lagomorph_legs(vec3 p) {
     return dist;
 }
 
-float finger(vec3 p, float offset, float len, float angle) {
-    p.xy *= rotate(angle);
+float finger(vec3 p, float offset, float len, float angle1, float angle2) {
+    p.xy *= rotate(angle1);
     p.x += offset;
-    return round_cone(p, 0.08, 0.12, len);
+    p.yz *= rotate(angle2);
+    return round_cone(p, 0.05, 0.1, len);
 }
 
 float smooth_union(float a, float b, float k) {
@@ -99,19 +100,21 @@ float smooth_union(float a, float b, float k) {
 float lagomorph_arms(vec3 p) {
     p.y -= 2;
     p.x = abs(p.x) - 0.2;
-    p.xy *= rotate(120);
+    p.xy *= rotate(115);
     float dist = round_cone(p, 0.1, 0.1, 0.6);
     p.y -= 0.6;
     p.xy *= rotate(20);
-    dist = smooth_union(dist, round_cone(p, 0.1, 0.12, 0.4), 0.02);
+    dist = min(dist, round_cone(p, 0.1, 0.12, 0.4));
     p.y -= 0.4;
-    p.xz *= rotate(-30);
-    p.yz *= rotate(-60);
+    p.xz *= rotate(-60);
+    p.yz *= rotate(-40);
     dist = smooth_union(dist, origin_sphere(p, 0.22), 0.1);
-    dist = smooth_union(dist, finger(p, 0.08, 0.4, -50), 0.02);
-    dist = smooth_union(dist, finger(p, 0.05, 0.5, -10), 0.02);
-    dist = smooth_union(dist, finger(p, -0.05, 0.5, 0), 0.02);
-    dist = smooth_union(dist, finger(p, -0.1, 0.45, 60), 0.02);
+    p.z -= 0.1;
+    dist = smooth_union(dist, finger(p, 0.08, 0.35, -30, 10), 0.02);
+    dist = smooth_union(dist, finger(p, -0.1, 0.4, 80, 30), 0.02);
+    p.z -= 0.04;
+    dist = smooth_union(dist, finger(p, 0.07, 0.5, -10, 40), 0.02);
+    dist = smooth_union(dist, finger(p, -0.07, 0.5, 0, 40), 0.02);
     return dist;
 }
 
@@ -131,7 +134,7 @@ float lagomorph_ears(vec3 p) {
 }
 
 float lagomorph(vec3 p) {
-    p.y -= 1;
+    p.y -= 0.5;
     float dist = round_cone(p, 0.4, 0.2, 1);
     p.y += 1.3;
     dist = smooth_union(dist, lagomorph_legs(p), 0.05);
@@ -239,8 +242,8 @@ vec3 apply_reflections(vec3 color, ma mat, vec3 p, vec3 direction) {
 }
 
 vec3 render(float u, float v) {
-    vec3 eye_position = vec3(0, 3, 4);
-    vec3 forward = normalize(vec3(0, 0, -3) - eye_position);
+    vec3 eye_position = vec3(-2, 2, 3);
+    vec3 forward = normalize(vec3(0, 1, 0) - eye_position);
     vec3 up = vec3(0.0, 1.0, 0.0);
     vec3 right = normalize(cross(up, forward));
     up = cross(-right, forward);
