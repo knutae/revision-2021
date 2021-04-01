@@ -48,7 +48,7 @@ void handle_link_error(GLuint program) {
   if (!success) {
     char logBuffer[4096];
     GLsizei length;
-    glGetShaderInfoLog(program, sizeof(logBuffer), &length, logBuffer);
+    glGetProgramInfoLog(program, sizeof(logBuffer), &length, logBuffer);
     printf("Shader link error.\n%s\n", logBuffer);
   }
 }
