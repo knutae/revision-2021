@@ -64,24 +64,38 @@ mat2 rotate(float a) {
     return mat2(cos(r), -sin(r), sin(r), cos(r));
 }
 
+float smooth_union(float a, float b, float k) {
+    float h = clamp(0.5 + 0.5*(b-a)/k, 0, 1);
+    return mix(b, a, h) - k*h*(1-h);
+}
+
+float smooth_intersection(float a, float b, float k) {
+    float h = clamp(0.5 - 0.5*(b-a)/k, 0, 1);
+    return mix(b, a, h) + k*h*(1-h);
+}
+
 float lagomorph_legs(vec3 p) {
-    p.z -= 0.2;
-    p.y -= 0.5;
-    p.x = abs(p.x) - 0.7;
+    vec3 q = p;
+    q.z -= 0.2;
+    q.y -= 0.5;
+    q.x = abs(q.x) - 0.5;
     // upper legs
-    p.xy *= rotate(143);
-    p.y += 0.9;
-    float dist = round_cone(p, 0.13, 0.18, 0.8);
+    q.xy *= rotate(160);
+    q.yz *= rotate(-10);
+    q.y += 0.9;
+    float dist = round_cone(q, 0.13, 0.18, 0.8);
     // lower legs
-    p.y -= 0.8;
-    p.xy *= rotate(12);
-    dist = min(dist, round_cone(p, 0.18, 0.2, 0.4));
+    q.y -= 0.8;
+    q.yz *= rotate(10);
+    q.xy *= rotate(20);
+    dist = min(dist, round_cone(q, 0.18, 0.2, 0.4));
     // feet
-    p.y -= 0.4;
-    p.yz *= rotate(-90);
-    p.xy *= rotate(-10);
-    p.xz *= rotate(-20);
-    dist = min(dist, max(round_cone(p, 0.1, 0.3, 0.7), 0.05 - p.z));
+    q.y -= 0.4;
+    q.yz *= rotate(-80);
+    q.xy *= rotate(-30);
+    q.xz *= rotate(-20);
+    dist = smooth_union(dist, round_cone(q, 0.1, 0.3, 0.7), 0.1);
+    dist = smooth_intersection(dist, 0.1 - p.y, 0.1);
     return dist;
 }
 
@@ -90,11 +104,6 @@ float finger(vec3 p, float offset, float len, float angle1, float angle2) {
     p.x += offset;
     p.yz *= rotate(angle2);
     return round_cone(p, 0.05, 0.1, len);
-}
-
-float smooth_union(float a, float b, float k) {
-    float h = clamp(0.5 + 0.5*(b-a)/k, 0, 1);
-    return mix(b, a, h) - k*h*(1-h);
 }
 
 float lagomorph_arms(vec3 p) {
