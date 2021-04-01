@@ -128,18 +128,22 @@ float lagomorph_arms(vec3 p) {
 }
 
 float lagomorph_head(vec3 p) {
-    p.y -= 2.8;
+    p.y -= 2.6;
     p.x /= 1.5;
     return origin_sphere(p, 0.48);
 }
 
 float lagomorph_ears(vec3 p) {
-    p.y -= 3.6;
+    p.y -= 3.5;
     p.x = abs(p.x) - 0.5;
     p.xy *= rotate(10);
+    p.yz *= rotate(5);
     p.y /= 6;
-    p.x /= 2;
-    return origin_sphere(p, 0.1);
+    p.x /= 2.5;
+    float dist = origin_sphere(p, 0.1);
+    dist = smooth_intersection(dist, p.z - 0.04, 0.05);
+    dist = smooth_intersection(dist, -0.06 - p.x, 0.05);
+    return dist;
 }
 
 float lagomorph(vec3 p) {
