@@ -160,11 +160,24 @@ float lagomorph(vec3 p) {
     return dist;
 }
 
+float blinder(vec3 p) {
+    p.yz *= rotate(45);
+    return box(p, vec3(2.4, 0.02, 0.05));
+}
+
+float blinders(vec3 p) {
+    float modulo = 0.2;
+    p.y = mod(p.y - 0.5 * modulo, modulo) - 0.5 * modulo;
+    return blinder(p);
+}
+
 float room(vec3 p) {
     p.z += 9;
     float dist = max(box(p, vec3(10)), -box(p, vec3(9.8)));
     p.y -= 2.7;
-    dist = max(dist, -box(p, vec3(2.5, 2, 100))); // window
+    p.z -= 9.9;
+    dist = max(dist, -box(p, vec3(2.5, 2, 1))); // window
+    dist = min(dist, blinders(p));
     return dist;
 }
 
