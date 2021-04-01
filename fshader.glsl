@@ -31,6 +31,11 @@ float origin_box(vec3 p, vec3 dimensions, float corner_radius) {
     return length(max(abs(p) - dimensions, 0.0)) - corner_radius;
 }
 
+float box(vec3 p, vec3 dimensions) {
+    vec3 q = abs(p) - dimensions;
+    return length(max(q,0)) + min(max(q.x,max(q.y,q.z)),0);
+}
+
 void closest_material(inout float dist, inout ma mat, float new_dist, ma new_mat) {
     if (new_dist < dist) {
         dist = new_dist;
@@ -155,11 +160,20 @@ float lagomorph(vec3 p) {
     return dist;
 }
 
+float room(vec3 p) {
+    p.z += 9;
+    float dist = max(box(p, vec3(10)), -box(p, vec3(9.8)));
+    p.y -= 2.7;
+    dist = max(dist, -box(p, vec3(2.5, 2, 100))); // window
+    return dist;
+}
+
 float scene(vec3 p, out ma mat) {
     //float dist = origin_sphere(p, 1);
     float dist = lagomorph(p);
     mat = ma(0.1, 0.9, 0, 10, 0, vec3(1));
     closest_material(dist, mat, ground(p), ma(0.1, 0.9, 0, 10, 0.0, vec3(0.8)));
+    closest_material(dist, mat, room(p), ma(0.1, 0.9, 0, 10, 0.0, vec3(0.8)));
     return dist;
 }
 
