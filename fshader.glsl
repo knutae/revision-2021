@@ -266,9 +266,8 @@ vec3 apply_reflections(vec3 color, ma mat, vec3 p, vec3 direction) {
     return color;
 }
 
-vec3 render(float u, float v) {
-    vec3 eye_position = vec3(0, 2, -14);
-    vec3 forward = normalize(vec3(0, -4, 0) - eye_position);
+vec3 render_from(float u, float v, vec3 eye_position, vec3 look_at) {
+    vec3 forward = normalize(look_at - eye_position);
     vec3 up = vec3(0.0, 1.0, 0.0);
     vec3 right = normalize(cross(up, forward));
     up = cross(-right, forward);
@@ -284,6 +283,20 @@ vec3 render(float u, float v) {
         color = apply_fog(color, length(p - start_pos));
     }
     return color;
+}
+
+
+vec3 render_far(float u, float v) {
+    return render_from(u, v, vec3(0, 2, -14), vec3(0, -4, 0));
+}
+
+vec3 render_close(float u, float v) {
+    return render_from(u, v, vec3(-4, 0.5, -1), vec3(0, 2, 1));
+}
+
+vec3 render(float u, float v) {
+    return render_far(u, v);
+    //return render_close(u, v);
 }
 
 vec3 render_aa(float u, float v) {
