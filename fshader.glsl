@@ -121,6 +121,15 @@ float lagomorph_head(vec3 p) {
     return origin_sphere(p, 0.48);
 }
 
+float lagomorph_ears(vec3 p) {
+    p.y -= 3.6;
+    p.x = abs(p.x) - 0.5;
+    p.xy *= rotate(10);
+    p.y /= 6;
+    p.x /= 2;
+    return origin_sphere(p, 0.1);
+}
+
 float lagomorph(vec3 p) {
     p.y -= 1;
     float dist = round_cone(p, 0.4, 0.2, 1);
@@ -128,6 +137,7 @@ float lagomorph(vec3 p) {
     dist = smooth_union(dist, lagomorph_legs(p), 0.05);
     dist = smooth_union(dist, lagomorph_arms(p), 0.05);
     dist = smooth_union(dist, lagomorph_head(p), 0.05);
+    dist = smooth_union(dist, lagomorph_ears(p), 0.05);
     return dist;
 }
 
