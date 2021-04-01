@@ -43,10 +43,8 @@ float repeated_boxes_xz(vec3 p, vec3 dimensions, float corner_radius, float modu
     return origin_box(p, dimensions, corner_radius);
 }
 
-float floor(vec3 p) {
-    return min(
-        horizontal_plane(p, -1),
-        repeated_boxes_xz(vec3(p.x, p.y+2, p.z), vec3(1), 0.1, 5));
+float ground(vec3 p) {
+    return p.y + 0.8;
 }
 
 float round_cone(vec3 p, float r1, float r2, float h) {
@@ -161,7 +159,7 @@ float scene(vec3 p, out ma mat) {
     //float dist = origin_sphere(p, 1);
     float dist = lagomorph(p);
     mat = ma(0.1, 0.9, 0, 10, 0, vec3(1));
-    closest_material(dist, mat, floor(p), ma(0.1, 0.9, 0, 10, 0.0, vec3(0.8)));
+    closest_material(dist, mat, ground(p), ma(0.1, 0.9, 0, 10, 0.0, vec3(0.8)));
     return dist;
 }
 
@@ -200,7 +198,7 @@ float soft_shadow(vec3 p, vec3 light_direction, float sharpness) {
     p += light_direction * 0.1;
     float total_dist = 0.1;
     float res = 1.0;
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 200; i++) {
         float dist = scene(p, m);
         if (dist < 0.01) {
             return 0.0;
@@ -223,8 +221,8 @@ vec3 apply_fog(vec3 color, float total_distance) {
 
 vec3 phong_lighting(vec3 p, ma mat, vec3 ray_direction) {
     vec3 normal = estimate_normal(p);
-    vec3 light_direction = normalize(vec3(-0.3, -1.0, -0.5));
-    float shadow = soft_shadow(p, -light_direction, 20.0);
+    vec3 light_direction = normalize(vec3(0.05, -0.17, -0.5));
+    float shadow = soft_shadow(p, -light_direction, 1000.0);
     float diffuse = max(0.0, mat.D * dot(normal, -light_direction)) * shadow;
     vec3 reflection = ray_reflection(ray_direction, normal);
     float specular = pow(max(0.0, mat.P * dot(reflection, -light_direction)), mat.S) * shadow;
@@ -255,8 +253,8 @@ vec3 apply_reflections(vec3 color, ma mat, vec3 p, vec3 direction) {
 }
 
 vec3 render(float u, float v) {
-    vec3 eye_position = vec3(-2, 2, 3);
-    vec3 forward = normalize(vec3(0, 1, 0) - eye_position);
+    vec3 eye_position = vec3(0, 2, -14);
+    vec3 forward = normalize(vec3(0, -4, 0) - eye_position);
     vec3 up = vec3(0.0, 1.0, 0.0);
     vec3 right = normalize(cross(up, forward));
     up = cross(-right, forward);
