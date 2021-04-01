@@ -287,7 +287,7 @@ vec3 render_from(float u, float v, vec3 eye_position, vec3 look_at) {
 
 
 vec3 render_far(float u, float v) {
-    return render_from(u, v, vec3(0, 2, -14), vec3(0, -4, 0));
+    return render_from(u, v, vec3(0.5, 2, -14), vec3(1, -4, 0));
 }
 
 vec3 render_close(float u, float v) {
@@ -295,8 +295,11 @@ vec3 render_close(float u, float v) {
 }
 
 vec3 render(float u, float v) {
-    return render_far(u, v);
-    //return render_close(u, v);
+    if (u > 0) {
+        return render_far(u-0.5, v);
+    } else {
+        return render_close(u+0.5, v);
+    }
 }
 
 vec3 render_aa(float u, float v) {
