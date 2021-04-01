@@ -1,4 +1,5 @@
 
+CC = clang
 CFLAGS = -fno-plt -fno-unwind-tables -Wall -Werror -Oz
 CFLAGS += $(shell pkg-config --cflags gtk+-3.0)
 
