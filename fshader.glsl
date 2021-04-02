@@ -187,8 +187,9 @@ float room(vec3 p) {
 float scene(vec3 p, out ma mat) {
     //float dist = origin_sphere(p, 1);
     float dist = lagomorph(p);
+    //float dist = 1000;
     mat = ma(0.1, 0.9, 0, 10, 0, vec3(1));
-    closest_material(dist, mat, ground(p), ma(0.1, 0.9, 0, 10, 0.0, vec3(0.8)));
+    closest_material(dist, mat, ground(p), ma(0.1, 0.9, 0.9, 4, 0.0, vec3(0.8)));
     closest_material(dist, mat, room(p), ma(0.1, 0.9, 0, 10, 0.0, vec3(0.8)));
     return dist;
 }
