@@ -398,6 +398,13 @@ vec3 render_outside(float u, float v) {
 }
 
 vec3 render(float u, float v) {
+    float lw = 0.01;
+    if (abs(u) < lw || abs(u) > 1-lw*2 || abs(v) > H/W - lw*2) {
+        return vec3(1);
+    }
+    if (abs(u) < lw*2 || abs(u) > 1-lw*3 || abs(v) > H/W - lw*3) {
+        return vec3(0);
+    }
     if (u > 0) {
         return render_far(u-0.5, v);
         //return render_outside(u-0.5, v);
