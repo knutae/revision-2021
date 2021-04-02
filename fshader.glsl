@@ -166,9 +166,12 @@ float blind(vec3 p) {
 }
 
 float blinds(vec3 p) {
+    vec3 q = p;
+    q.x = abs(q.x) - 2;
+    float dist = length(q.xz) - 0.02;
     float modulo = 0.2;
     p.y = mod(p.y - 0.5 * modulo, modulo) - 0.5 * modulo;
-    return blind(p);
+    return min(dist, blind(p));
 }
 
 float room(vec3 p) {
