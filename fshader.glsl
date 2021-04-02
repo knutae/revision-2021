@@ -118,9 +118,30 @@ float straight_fingers(vec3 p) {
     return max(round_cone(q, 0.01, 0.1, 0.4), abs(p.x) - modulo * 1.5);
 }
 
-float lagomorph_arms(vec3 p) {
+float right_arm(vec3 p) {
     p.y -= 2;
-    p.x = abs(p.x) - 0.2;
+    p.x -= 0.2;
+    p.xy *= rotate(80);
+    p.xz *= rotate(-100);
+    p.xy *= rotate(30);
+    float dist = round_cone(p, 0.1, 0.1, 0.6);
+    p.y -= 0.6;
+    p.xy *= rotate(30);
+    p.yz *= rotate(10);
+    dist = min(dist, round_cone(p, 0.1, 0.12, 0.4));
+    p.y -= 0.4;
+    p.xz *= rotate(-100);
+    p.yz *= rotate(20);
+    dist = smooth_union(dist, origin_sphere(p, 0.22), 0.1);
+    p.z -= 0.1;
+    dist = smooth_union(dist, finger(p, -0.1, 0.4, 80, 30), 0.02);
+    dist = smooth_union(dist, straight_fingers(p), 0.1);
+    return dist;
+}
+
+float left_arm(vec3 p) {
+    p.y -= 2;
+    p.x =  -p.x - 0.2;
     p.xy *= rotate(115);
     float dist = round_cone(p, 0.1, 0.1, 0.6);
     p.y -= 0.6;
@@ -134,6 +155,11 @@ float lagomorph_arms(vec3 p) {
     dist = smooth_union(dist, finger(p, -0.1, 0.4, 80, 30), 0.02);
     dist = smooth_union(dist, straight_fingers(p), 0.1);
     return dist;
+}
+
+float lagomorph_arms(vec3 p) {
+    return min(left_arm(p), right_arm(p));
+    //return right_arm(p);
 }
 
 float lagomorph_head(vec3 p) {
@@ -312,7 +338,7 @@ vec3 render_far(float u, float v) {
 }
 
 vec3 render_close(float u, float v) {
-    return render_from(u, v, vec3(-4, 0.5, -1), vec3(0, 2, 1));
+    return render_from(u, v, vec3(4, 0.5, -1), vec3(0, 2, 1));
 }
 
 vec3 render_outside(float u, float v) {
