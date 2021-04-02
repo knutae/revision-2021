@@ -118,6 +118,37 @@ float straight_fingers(vec3 p) {
     return max(round_cone(q, 0.01, 0.1, 0.4), abs(p.x) - modulo * 1.5);
 }
 
+float lugermorph_handle(vec3 p) {
+    vec3 q = p;
+    q.z += 0.17;
+    q.y -= 0.1;
+    q.yz *= rotate(80);
+    float dist = origin_box(q, vec3(0.08, 0.28, 0.08), 0.02);
+    dist = max(dist, p.z+0.1);
+    p.z += 0.12;
+    p.y += 0.1;
+    dist = min(dist, max(abs(p.x) - 0.05, max(length(p.yz) - 0.12, -length(p.yz) + 0.1)));
+    return dist;
+}
+
+float lugermorph(vec3 p) {
+    p.y -= 1;
+    p.z -= 1;
+    p.yz *= rotate(90);
+    float dist = max(length(p.xz) - 0.05, abs(p.y) - 0.5);
+    dist = min(dist, max(length(p.xz) - 0.07, abs(p.y + 0.4) - 0.15));
+    p.y -= 0.6;
+    dist = min(dist, max(length(p.xz) - 0.1, abs(p.y) - 0.3));
+    p.z += 0.05;
+    dist = min(dist, box(p, vec3(0.1, 0.3, 0.1)));
+    vec3 q = p;
+    q.z += 0.17;
+    q.y -= 0.1;
+    q.yz *= rotate(60);
+    dist = min(dist, lugermorph_handle(p));
+    return dist;
+}
+
 float right_arm(vec3 p) {
     p.y -= 2;
     p.x -= 0.2;
@@ -218,9 +249,11 @@ float room(vec3 p) {
 
 float scene(vec3 p, out ma mat) {
     //float dist = origin_sphere(p, 1);
-    float dist = lagomorph(p);
+    //float dist = lagomorph(p);
+    float dist = right_arm(p);
     //float dist = 1000;
     mat = ma(0.1, 0.9, 0, 10, 0, vec3(1));
+    closest_material(dist, mat, lugermorph(p), ma(0.1, 0.9, 0, 10, 0, vec3(0.2)));
     closest_material(dist, mat, ground(p), ma(0.1, 0.9, 0.9, 4, 0.0, vec3(0.8)));
     //closest_material(dist, mat, room(p), ma(0.1, 0.9, 0, 10, 0.0, vec3(0.8)));
     return dist;
