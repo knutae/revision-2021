@@ -109,6 +109,15 @@ float finger(vec3 p, float offset, float len, float angle1, float angle2) {
     return round_cone(p, 0.05, 0.1, len);
 }
 
+float straight_fingers(vec3 p) {
+    float modulo = 0.15;
+    vec3 q = p;
+    q.y -= 0.1;
+    q.yz *= rotate(40);
+    q.x = mod(q.x - 0.5 * modulo, modulo) - 0.5 * modulo;
+    return max(round_cone(q, 0.01, 0.1, 0.4), abs(p.x) - modulo * 1.5);
+}
+
 float lagomorph_arms(vec3 p) {
     p.y -= 2;
     p.x = abs(p.x) - 0.2;
@@ -122,11 +131,8 @@ float lagomorph_arms(vec3 p) {
     p.yz *= rotate(-40);
     dist = smooth_union(dist, origin_sphere(p, 0.22), 0.1);
     p.z -= 0.1;
-    dist = smooth_union(dist, finger(p, 0.08, 0.35, -30, 10), 0.02);
     dist = smooth_union(dist, finger(p, -0.1, 0.4, 80, 30), 0.02);
-    p.z -= 0.04;
-    dist = smooth_union(dist, finger(p, 0.07, 0.5, -10, 40), 0.02);
-    dist = smooth_union(dist, finger(p, -0.07, 0.5, 0, 40), 0.02);
+    dist = smooth_union(dist, straight_fingers(p), 0.1);
     return dist;
 }
 
@@ -180,7 +186,7 @@ float room(vec3 p) {
     p.y -= 2.7;
     p.z -= 9.9;
     dist = max(dist, -box(p, vec3(2.5, 2, 1))); // window
-    dist = min(dist, blinds(p));
+    //dist = min(dist, blinds(p));
     return dist;
 }
 
@@ -190,7 +196,7 @@ float scene(vec3 p, out ma mat) {
     //float dist = 1000;
     mat = ma(0.1, 0.9, 0, 10, 0, vec3(1));
     closest_material(dist, mat, ground(p), ma(0.1, 0.9, 0.9, 4, 0.0, vec3(0.8)));
-    closest_material(dist, mat, room(p), ma(0.1, 0.9, 0, 10, 0.0, vec3(0.8)));
+    //closest_material(dist, mat, room(p), ma(0.1, 0.9, 0, 10, 0.0, vec3(0.8)));
     return dist;
 }
 
@@ -309,9 +315,14 @@ vec3 render_close(float u, float v) {
     return render_from(u, v, vec3(-4, 0.5, -1), vec3(0, 2, 1));
 }
 
+vec3 render_outside(float u, float v) {
+    return render_from(u, v, vec3(1, 3, 4), vec3(0, 1, 0));
+}
+
 vec3 render(float u, float v) {
     if (u > 0) {
-        return render_far(u-0.5, v);
+        //return render_far(u-0.5, v);
+        return render_outside(u-0.5, v);
     } else {
         return render_close(u+0.5, v);
     }
