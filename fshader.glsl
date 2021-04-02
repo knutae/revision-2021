@@ -176,17 +176,17 @@ float right_arm(vec3 p) {
 float left_arm(vec3 p) {
     p.y -= 2;
     p.x =  -p.x - 0.2;
-    p.xy *= rotate(115);
+    p.xy *= rotate(140);
     float dist = round_cone(p, 0.1, 0.1, 0.6);
     p.y -= 0.6;
     p.xy *= rotate(20);
     dist = min(dist, round_cone(p, 0.1, 0.12, 0.4));
     p.y -= 0.4;
     p.xz *= rotate(-60);
-    p.yz *= rotate(-40);
+    p.yz *= rotate(-20);
     dist = smooth_union(dist, origin_sphere(p, 0.22), 0.1);
     p.z -= 0.1;
-    dist = smooth_union(dist, finger(p, -0.1, 0.4, 80, 30), 0.02);
+    dist = smooth_union(dist, finger(p, -0.1, 0.4, 60, 30), 0.02);
     dist = smooth_union(dist, straight_fingers(p), 0.1);
     return dist;
 }
