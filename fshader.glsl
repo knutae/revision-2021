@@ -341,7 +341,7 @@ float sharp_shadow(vec3 p, vec3 light_direction) {
 const vec3 background_color = vec3(0.9, 0.95, 1.0);
 
 vec3 apply_fog(vec3 color, float total_distance) {
-    return mix(color, background_color, 1.0 - exp(-0.06 * total_distance));
+    return mix(color, background_color, 1.0 - exp(-0.04 * total_distance));
 }
 
 vec3 phong_lighting(vec3 p, ma mat, vec3 ray_direction) {
