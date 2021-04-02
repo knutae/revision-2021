@@ -8,7 +8,7 @@
 #include "gen/shaders.h"
 #endif
 
-#define EMPTY_SHADER "void main(){}"
+#define DUMMY_VERTEX_SHADER "void main(){gl_Position=vec4(0);}"
 
 #define GEOMETRY_SHADER \
   "#version 450\n" \
@@ -127,7 +127,7 @@ void realize(GtkGLArea *area) {
 #endif
 
   program = glCreateProgram();
-  GLuint vertex_shader = create_shader(EMPTY_SHADER, GL_VERTEX_SHADER);
+  GLuint vertex_shader = create_shader(DUMMY_VERTEX_SHADER, GL_VERTEX_SHADER);
   GLuint geometry_shader = create_shader(GEOMETRY_SHADER, GL_GEOMETRY_SHADER);
 #ifdef DEBUG
   fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
