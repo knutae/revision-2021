@@ -436,7 +436,4 @@ void main() {
 //#else
 //    F = render_aa(u, v);
 //#endif
-    // vignette
-    float edge = abs(C.x - 1) + abs(C.y - 1);
-    F = mix(F, vec3(0), min(1, max(0, edge*0.3 - 0.2)));
 }
