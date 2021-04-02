@@ -231,13 +231,29 @@ float blind(vec3 p) {
     return box(p, vec3(2.4, 0.02, 0.05));
 }
 
+float bent_blind(vec3 p) {
+    vec3 q = p;
+    q.xy *= rotate(5);
+    q.yz *= rotate(45);
+    float dist = max(box(q, vec3(2.4, 0.04, 0.05)), -p.x);
+    q = p;
+    q.xy *= rotate(-5);
+    q.yz *= rotate(45);
+    dist = min(dist, max(box(q, vec3(2.4, 0.02, 0.05)), p.x));
+    return dist;
+}
+
 float blinds(vec3 p) {
+    float y = p.y;
     vec3 q = p;
     q.x = abs(q.x) - 2;
-    float dist = length(q.xz) - 0.02;
+    float dist = 1000;
     float modulo = 0.2;
     p.y = mod(p.y - 0.5 * modulo, modulo) - 0.5 * modulo;
-    return min(dist, blind(p));
+    dist = min(dist, blind(p));
+    dist = max(dist, -abs(y + modulo) + 0.1);
+    dist = min(dist, length(q.xz) - 0.02);
+    return dist;
 }
 
 float room(vec3 p) {
@@ -247,6 +263,7 @@ float room(vec3 p) {
     p.z -= 9.9;
     dist = max(dist, -box(p, vec3(2.5, 2, 1))); // window
     dist = min(dist, blinds(p));
+    dist = min(dist, bent_blind(p));
     return dist;
 }
 
@@ -377,7 +394,7 @@ vec3 render_close(float u, float v) {
 }
 
 vec3 render_outside(float u, float v) {
-    return render_from(u, v, vec3(1, 3, 4), vec3(0, 1, 0));
+    return render_from(u, v, vec3(1, 3, 8), vec3(0, 1, 0));
 }
 
 vec3 render(float u, float v) {
