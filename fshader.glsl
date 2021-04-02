@@ -140,11 +140,14 @@ float lugermorph(vec3 p) {
     p /= scale;
     float dist = max(length(p.xz) - 0.05, abs(p.y) - 0.5);
     dist = min(dist, max(length(p.xz) - 0.07, abs(p.y + 0.4) - 0.15));
+    vec3 q = p + vec3(0, 0.42, -0.05);
+    q.yz *= rotate(45);
+    dist = min(dist, box(q, vec3(0.03, 0.05, 0.05)));
     p.y -= 0.6;
     dist = min(dist, max(length(p.xz) - 0.1, abs(p.y) - 0.3));
     p.z += 0.05;
     dist = min(dist, box(p, vec3(0.1, 0.3, 0.1)));
-    vec3 q = p;
+    q = p;
     q.z += 0.17;
     q.y -= 0.1;
     q.yz *= rotate(60);
@@ -405,6 +408,10 @@ vec3 render_outside(float u, float v) {
     return render_from(u, v, vec3(-1, 3, 5), vec3(0, 1, 0));
 }
 
+vec3 render_luger(float u, float v) {
+    return render_from(u, v, vec3(2, 2, 2), vec3(0, 2, 1));
+}
+
 vec3 render(float u, float v) {
     float lw = 0.01;
     float split = u - 0.15 * v;
@@ -442,7 +449,7 @@ void main() {
     float v = (C.y - 1.0) * H / W;
 //#if defined(DEBUG)
     F = render(u, v);
-    //F = render_outside(u, v);
+    //F = render_luger(u, v);
 //#else
 //    F = render_aa(u, v);
 //#endif
