@@ -202,6 +202,13 @@ float lagomorph_head(vec3 p) {
     return origin_sphere(p, 0.48);
 }
 
+float lagomorph_eyes(vec3 p) {
+    p.x = abs(p.x) - 0.4;
+    p.y -= 2;
+    p.z -= 0.35;
+    return origin_sphere(p, 0.05);
+}
+
 float lagomorph_ears(vec3 p) {
     p.y -= 3.5;
     p.x = abs(p.x) - 0.5;
@@ -275,6 +282,7 @@ float scene(vec3 p, out ma mat) {
     mat = ma(0.1, 0.9, 0, 10, 0, vec3(1));
     closest_material(dist, mat, lugermorph(p), ma(0.1, 0.9, 0, 10, 0, vec3(0.2)));
     closest_material(dist, mat, ground(p), ma(0.1, 0.9, 0.9, 4, 0.0, vec3(0.8)));
+    closest_material(dist, mat, lagomorph_eyes(p), ma(0.1, 0.9, 0.5, 4, 0.0, vec3(0.1)));
     closest_material(dist, mat, room(p), ma(0.1, 0.9, 0, 10, 0.0, vec3(0.8)));
     return dist;
 }
@@ -394,7 +402,7 @@ vec3 render_close(float u, float v) {
 }
 
 vec3 render_outside(float u, float v) {
-    return render_from(u, v, vec3(1, 3, 8), vec3(0, 1, 0));
+    return render_from(u, v, vec3(-1, 3, 5), vec3(0, 1, 0));
 }
 
 vec3 render(float u, float v) {
@@ -434,6 +442,7 @@ void main() {
     float v = (C.y - 1.0) * H / W;
 //#if defined(DEBUG)
     F = render(u, v);
+    //F = render_outside(u, v);
 //#else
 //    F = render_aa(u, v);
 //#endif
