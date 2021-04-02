@@ -15,7 +15,7 @@ struct ma {
     vec3 C; // RGB color
 };
 
-float DRAW_DISTANCE = 500.0;
+float DRAW_DISTANCE = 20.0;
 float PI = atan(1)*4;
 
 float origin_sphere(vec3 p, float radius) {
@@ -242,10 +242,10 @@ float sharp_shadow(vec3 p, vec3 light_direction) {
     return 1.0;
 }
 
-const vec3 background_color = vec3(0.8, 0.9, 1.0);
+const vec3 background_color = vec3(0.9, 0.95, 1.0);
 
 vec3 apply_fog(vec3 color, float total_distance) {
-    return mix(color, background_color, 1.0 - exp(-0.01 * total_distance));
+    return mix(color, background_color, 1.0 - exp(-0.06 * total_distance));
 }
 
 vec3 phong_lighting(vec3 p, ma mat, vec3 ray_direction) {
