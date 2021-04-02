@@ -220,24 +220,22 @@ vec3 ray_reflection(vec3 direction, vec3 normal) {
     return 2.0 * dot(-direction, normal) * normal + direction;
 }
 
-float soft_shadow(vec3 p, vec3 light_direction, float sharpness) {
+float sharp_shadow(vec3 p, vec3 light_direction) {
     ma m;
     p += light_direction * 0.1;
     float total_dist = 0.1;
-    float res = 1.0;
     for (int i = 0; i < 200; i++) {
         float dist = scene(p, m);
         if (dist < 0.01) {
             return 0.0;
         }
         total_dist += dist;
-        res = min(res, sharpness * dist / total_dist);
         if (total_dist > DRAW_DISTANCE) {
             break;
         }
         p += light_direction * dist;
     }
-    return res;
+    return 1.0;
 }
 
 const vec3 background_color = vec3(0.8, 0.9, 1.0);
@@ -249,7 +247,7 @@ vec3 apply_fog(vec3 color, float total_distance) {
 vec3 phong_lighting(vec3 p, ma mat, vec3 ray_direction) {
     vec3 normal = estimate_normal(p);
     vec3 light_direction = normalize(vec3(0.05, -0.17, -0.5));
-    float shadow = soft_shadow(p, -light_direction, 1000.0);
+    float shadow = sharp_shadow(p, -light_direction);
     float diffuse = max(0.0, mat.D * dot(normal, -light_direction)) * shadow;
     vec3 reflection = ray_reflection(ray_direction, normal);
     float specular = pow(max(0.0, mat.P * dot(reflection, -light_direction)), mat.S) * shadow;
