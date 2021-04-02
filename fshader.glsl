@@ -132,9 +132,12 @@ float lugermorph_handle(vec3 p) {
 }
 
 float lugermorph(vec3 p) {
-    p.y -= 1;
-    p.z -= 1;
+    p += vec3(-0.3, -2.4, -1.4);
     p.yz *= rotate(90);
+    p.xy *= rotate(30);
+    p.yz *= rotate(20);
+    float scale = 1.2;
+    p /= scale;
     float dist = max(length(p.xz) - 0.05, abs(p.y) - 0.5);
     dist = min(dist, max(length(p.xz) - 0.07, abs(p.y + 0.4) - 0.15));
     p.y -= 0.6;
@@ -146,14 +149,14 @@ float lugermorph(vec3 p) {
     q.y -= 0.1;
     q.yz *= rotate(60);
     dist = min(dist, lugermorph_handle(p));
-    return dist;
+    return dist * scale;
 }
 
 float right_arm(vec3 p) {
     p.y -= 2;
     p.x -= 0.2;
     p.xy *= rotate(80);
-    p.xz *= rotate(-100);
+    p.xz *= rotate(-120);
     p.xy *= rotate(30);
     float dist = round_cone(p, 0.1, 0.1, 0.6);
     p.y -= 0.6;
@@ -238,24 +241,24 @@ float blinds(vec3 p) {
 }
 
 float room(vec3 p) {
-    p.z += 9;
+    p.z += 8;
     float dist = max(box(p, vec3(10)), -box(p, vec3(9.8)));
     p.y -= 2.7;
     p.z -= 9.9;
     dist = max(dist, -box(p, vec3(2.5, 2, 1))); // window
-    //dist = min(dist, blinds(p));
+    dist = min(dist, blinds(p));
     return dist;
 }
 
 float scene(vec3 p, out ma mat) {
     //float dist = origin_sphere(p, 1);
-    //float dist = lagomorph(p);
-    float dist = right_arm(p);
+    float dist = lagomorph(p);
+    //float dist = right_arm(p);
     //float dist = 1000;
     mat = ma(0.1, 0.9, 0, 10, 0, vec3(1));
     closest_material(dist, mat, lugermorph(p), ma(0.1, 0.9, 0, 10, 0, vec3(0.2)));
     closest_material(dist, mat, ground(p), ma(0.1, 0.9, 0.9, 4, 0.0, vec3(0.8)));
-    //closest_material(dist, mat, room(p), ma(0.1, 0.9, 0, 10, 0.0, vec3(0.8)));
+    closest_material(dist, mat, room(p), ma(0.1, 0.9, 0, 10, 0.0, vec3(0.8)));
     return dist;
 }
 
@@ -364,7 +367,6 @@ vec3 render_from(float u, float v, vec3 eye_position, vec3 look_at) {
     }
     return color;
 }
-
 
 vec3 render_far(float u, float v) {
     return render_from(u, v, vec3(0.5, 2, -14), vec3(1, -4, 0));
