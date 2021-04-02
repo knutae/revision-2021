@@ -207,11 +207,11 @@ float lagomorph_ears(vec3 p) {
     p.x = abs(p.x) - 0.5;
     p.xy *= rotate(10);
     p.yz *= rotate(5);
-    p.y /= 6;
-    p.x /= 2.5;
-    float dist = origin_sphere(p, 0.1);
+    p.y /= 3;
+    p.x /= 1.25;
+    float dist = origin_sphere(p, 0.2);
     dist = smooth_intersection(dist, p.z - 0.04, 0.05);
-    dist = smooth_intersection(dist, -0.06 - p.x, 0.05);
+    dist = smooth_intersection(dist, -0.1 - p.x, 0.06);
     return dist;
 }
 
