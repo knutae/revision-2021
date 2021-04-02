@@ -390,7 +390,7 @@ vec3 render_far(float u, float v) {
 }
 
 vec3 render_close(float u, float v) {
-    return render_from(u, v, vec3(4, 0.5, -1), vec3(0, 2, 1));
+    return render_from(u, v, vec3(3, 1, -1), vec3(0, 2, 1));
 }
 
 vec3 render_outside(float u, float v) {
@@ -399,8 +399,8 @@ vec3 render_outside(float u, float v) {
 
 vec3 render(float u, float v) {
     if (u > 0) {
-        //return render_far(u-0.5, v);
-        return render_outside(u-0.5, v);
+        return render_far(u-0.5, v);
+        //return render_outside(u-0.5, v);
     } else {
         return render_close(u+0.5, v);
     }
