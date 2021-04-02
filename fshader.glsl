@@ -11,7 +11,6 @@ struct ma {
     float D; // diffuse
     float P; // specular
     float S; // shininess
-    float R; // reflection
     vec3 C; // RGB color
 };
 
@@ -282,11 +281,11 @@ float scene(vec3 p, out ma mat) {
     float dist = lagomorph(p);
     //float dist = right_arm(p);
     //float dist = 1000;
-    mat = ma(0.1, 0.9, 0, 10, 0, vec3(1));
-    closest_material(dist, mat, lugermorph(p), ma(0.1, 0.9, 0.8, 10, 0, vec3(0.2)));
-    closest_material(dist, mat, ground(p), ma(0.1, 0.9, 0.9, 4, 0.0, vec3(0.8)));
-    closest_material(dist, mat, lagomorph_eyes(p), ma(0.1, 0.9, 0.5, 4, 0.0, vec3(0.1)));
-    closest_material(dist, mat, room(p), ma(0.1, 0.9, 0, 10, 0.0, vec3(0.8)));
+    mat = ma(0.1, 0.9, 0, 10, vec3(1));
+    closest_material(dist, mat, lugermorph(p), ma(0.1, 0.9, 0.8, 10, vec3(0.2)));
+    closest_material(dist, mat, ground(p), ma(0.1, 0.9, 0.9, 4, vec3(0.8)));
+    closest_material(dist, mat, lagomorph_eyes(p), ma(0.1, 0.9, 0.5, 4, vec3(0.1)));
+    closest_material(dist, mat, room(p), ma(0.1, 0.9, 0, 10, vec3(0.8)));
     return dist;
 }
 
@@ -354,29 +353,6 @@ vec3 phong_lighting(vec3 p, ma mat, vec3 ray_direction) {
     return min(mat.C * (diffuse + mat.A) + vec3(specular), vec3(1.0));
 }
 
-vec3 apply_reflections(vec3 color, ma mat, vec3 p, vec3 direction) {
-    float reflection = mat.R;
-    for (int i = 0; i < 3; i++) {
-        if (reflection <= 0.01) {
-            break;
-        }
-        vec3 reflection_color = background_color;
-        direction = ray_reflection(direction, estimate_normal(p));
-        vec3 start_pos = p;
-        p += 0.05 * direction;
-        if (ray_march(p, direction, mat)) {
-            reflection_color = phong_lighting(p, mat, direction);
-            reflection_color = apply_fog(reflection_color, length(p - start_pos));
-            color = mix(color, reflection_color, reflection);
-            reflection *= mat.R;
-        } else {
-            color = mix(color, reflection_color, reflection);
-            break;
-        }
-    }
-    return color;
-}
-
 vec3 render_from(float u, float v, vec3 eye_position, vec3 look_at) {
     vec3 forward = normalize(look_at - eye_position);
     vec3 up = vec3(0.0, 1.0, 0.0);
@@ -390,7 +366,6 @@ vec3 render_from(float u, float v, vec3 eye_position, vec3 look_at) {
     ma mat;
     if (ray_march(p, direction, mat)) {
         color = phong_lighting(p, mat, direction);
-        color = apply_reflections(color, mat, p, direction);
         color = apply_fog(color, length(p - start_pos));
     }
     return color;
