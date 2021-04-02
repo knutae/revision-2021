@@ -168,7 +168,7 @@ int main() {
 
   gtk_container_add(GTK_CONTAINER(window), area);
 #if defined(DEBUG)
-  gtk_window_resize(GTK_WINDOW(window), 640, 480);
+  gtk_window_resize(GTK_WINDOW(window), 800, 500);
 #else
   gtk_window_fullscreen(GTK_WINDOW(window));
 #endif
