@@ -1,8 +1,8 @@
 #version 450
 in vec2 C;
 out vec3 F;
-/*layout (location=0)*/ uniform float W;
-/*layout (location=1)*/ uniform float H;
+layout (location=0) uniform float W;
+layout (location=1) uniform float H;
 
 // Shader minifier does not (currently) minimize structs, so use short names.
 // Using a one-letter name for the struct itself seems to trigger a bug, so use two.
