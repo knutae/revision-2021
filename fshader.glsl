@@ -21,10 +21,6 @@ float origin_sphere(vec3 p, float radius) {
     return length(p) - radius;
 }
 
-float horizontal_plane(vec3 p, float height) {
-    return p.y - height;
-}
-
 float origin_box(vec3 p, vec3 dimensions, float corner_radius) {
     vec3 a = abs(p);
     return length(max(abs(p) - dimensions, 0.0)) - corner_radius;
@@ -40,11 +36,6 @@ void closest_material(inout float dist, inout ma mat, float new_dist, ma new_mat
         dist = new_dist;
         mat = new_mat;
     }
-}
-
-float repeated_boxes_xz(vec3 p, vec3 dimensions, float corner_radius, float modulo) {
-    p.xz = mod(p.xz - 0.5 * modulo, modulo) - 0.5 * modulo;
-    return origin_box(p, dimensions, corner_radius);
 }
 
 float ground(vec3 p) {
