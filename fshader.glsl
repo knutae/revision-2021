@@ -195,7 +195,6 @@ float left_arm(vec3 p) {
 
 float lagomorph_arms(vec3 p) {
     return min(left_arm(p), right_arm(p));
-    //return right_arm(p);
 }
 
 float lagomorph_head(vec3 p) {
@@ -379,6 +378,7 @@ vec3 render_close(float u, float v) {
     return render_from(u, v, vec3(3, 1, -1), vec3(0, 2, 1));
 }
 
+#if defined(DEBUG)
 vec3 render_outside(float u, float v) {
     return render_from(u, v, vec3(-1, 3, 5), vec3(0, 1, 0));
 }
@@ -386,6 +386,7 @@ vec3 render_outside(float u, float v) {
 vec3 render_luger(float u, float v) {
     return render_from(u, v, vec3(2, 2, 2), vec3(0, 2, 1));
 }
+#endif
 
 vec3 render(float u, float v) {
     float lw = 0.01;
@@ -398,7 +399,6 @@ vec3 render(float u, float v) {
     }
     if (split > 0) {
         return render_far(u-0.5, v);
-        //return render_outside(u-0.5, v);
     } else {
         return render_close(u+0.5, v);
     }
