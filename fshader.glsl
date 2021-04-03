@@ -215,6 +215,7 @@ float lagomorph_ears(vec3 p) {
     p.x = abs(p.x) - 0.5;
     p.xy *= rotate(10);
     p.yz *= rotate(5);
+    p.xz *= rotate(20);
     p.y /= 3;
     p.x /= 1.25;
     float dist = origin_sphere(p, 0.2);
