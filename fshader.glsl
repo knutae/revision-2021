@@ -119,14 +119,23 @@ float straight_fingers(vec3 p) {
 
 float lugermorph_handle(vec3 p) {
     vec3 q = p;
-    q.z += 0.17;
+    q.z += 0.23;
     q.y -= 0.1;
     q.yz *= rotate(80);
     float dist = origin_box(q, vec3(0.08, 0.28, 0.08), 0.02);
     dist = max(dist, p.z+0.1);
-    p.z += 0.12;
-    p.y += 0.1;
+    p.z += 0.18;
+    p.y += 0.07;
     dist = min(dist, max(abs(p.x) - 0.05, max(length(p.yz) - 0.12, -length(p.yz) + 0.1)));
+    return dist;
+}
+
+float luger_box(vec3 p) {
+    float dist = max(length(p.xz) - 0.1, abs(p.y) - 0.3);
+    p.z += 0.05;
+    dist = min(dist, box(p, vec3(0.1, 0.3, 0.1)));
+    dist = max(dist, length(p.yz) - 0.3);
+    dist = max(min(dist, length(p.yz - vec2(0.2, 0.1)) - 0.05), abs(p.x) - 0.13);
     return dist;
 }
 
@@ -143,11 +152,9 @@ float lugermorph(vec3 p) {
     q.yz *= rotate(45);
     dist = min(dist, box(q, vec3(0.03, 0.05, 0.05)));
     p.y -= 0.6;
-    dist = min(dist, max(length(p.xz) - 0.1, abs(p.y) - 0.3));
-    p.z += 0.05;
-    dist = min(dist, box(p, vec3(0.1, 0.3, 0.1)));
+    dist = min(dist, luger_box(p));
     q = p;
-    q.z += 0.17;
+    q.z += 0.12;
     q.y -= 0.1;
     q.yz *= rotate(60);
     dist = min(dist, lugermorph_handle(p));
