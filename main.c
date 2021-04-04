@@ -101,7 +101,7 @@ void load_shader(GLuint shader, const char * filename, GLenum type) {
 }
 
 void load_fragment_shader() {
-  system("mkdir -p gen && unifdef -b -x2 -DDEBUG -o gen/fshader-debug.glsl fshader.glsl");
+  system("mkdir -p gen && unifdef -b -x2 -DDEBUG -UNDEBUG -o gen/fshader-debug.glsl fshader.glsl");
   load_shader(fragment_shader, "gen/fshader-debug.glsl", GL_FRAGMENT_SHADER);
 }
 

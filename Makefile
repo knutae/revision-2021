@@ -32,7 +32,7 @@ $(SHADER_MINIFIER):
 
 gen/%.glsl: %.glsl
 	@mkdir -p gen
-	unifdef -x2 -DNDEBUG -o $@ $<
+	unifdef -x2 -DNDEBUG -UDEBUG -o $@ $<
 
 gen/shaders.h: gen/fshader.glsl $(SHADER_MINIFIER)
 	@mkdir -p gen
